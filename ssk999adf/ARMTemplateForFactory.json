@@ -175,7 +175,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "AzureSqlSource",
-								"sqlReaderQuery": "select * from ssk999db.INFORMATION_SCHEMA.TABLES\nwhere table_name in ('Cars','Countries','Movies')",
+								"sqlReaderQuery": "select * from Tables_To_Export \n",
 								"queryTimeout": "02:00:00",
 								"partitionOption": "None"
 							},

@@ -17,7 +17,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "SqlServerSource",
-						"sqlReaderQuery": "select * from gosales.INFORMATION_SCHEMA.TABLES\nwhere TABLE_SCHEMA = 'gosales'",
+						"sqlReaderQuery": "select * from gosales.INFORMATION_SCHEMA.TABLES\nwhere TABLE_SCHEMA = 'gosales'  and TABLE_NAME = 'branch'",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
@@ -84,7 +84,17 @@
 							"inputs": [
 								{
 									"referenceName": "ds_Table_OnPrem",
-									"type": "DatasetReference"
+									"type": "DatasetReference",
+									"parameters": {
+										"p_TableName": {
+											"value": "@item().Table_Name",
+											"type": "Expression"
+										},
+										"p_SchemaName": {
+											"value": "@item().Table_Schema",
+											"type": "Expression"
+										}
+									}
 								}
 							],
 							"outputs": [
@@ -93,11 +103,11 @@
 									"type": "DatasetReference",
 									"parameters": {
 										"p_TableName": {
-											"value": "@item().p_TableName",
+											"value": "@item().Table_Name",
 											"type": "Expression"
 										},
 										"p_SchemaName": {
-											"value": "@item().p_SchemaName",
+											"value": "@item().Table_Schema",
 											"type": "Expression"
 										}
 									}

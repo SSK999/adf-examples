@@ -832,7 +832,7 @@
 					"sources": [
 						{
 							"dataset": {
-								"referenceName": "ds_customer_subset",
+								"referenceName": "ds_customer",
 								"type": "DatasetReference"
 							},
 							"name": "Customer"
@@ -942,7 +942,7 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/ds_customer_subset')]",
+				"[concat(variables('factoryId'), '/datasets/ds_customer')]",
 				"[concat(variables('factoryId'), '/datasets/ds_CustomerAddress')]",
 				"[concat(variables('factoryId'), '/datasets/ds_Address')]",
 				"[concat(variables('factoryId'), '/datasets/Joined_Customer_Address')]"

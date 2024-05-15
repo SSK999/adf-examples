@@ -1,0 +1,30 @@
+{
+	"name": "ds_Table_Cloud",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_sqldb",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"p_TableName": {
+				"type": "string"
+			},
+			"p_SchemaName": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": {
+				"value": "@dataset().p_SchemaName",
+				"type": "Expression"
+			},
+			"table": {
+				"value": "@dataset().p_TableName",
+				"type": "Expression"
+			}
+		}
+	}
+}

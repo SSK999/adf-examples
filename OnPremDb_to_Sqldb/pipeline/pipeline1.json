@@ -17,7 +17,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "SqlServerSource",
-						"sqlReaderQuery": "select * from gosales.INFORMATION_SCHEMA.TABLES\nwhere TABLE_SCHEMA = 'gosales'  and TABLE_NAME = 'branch'",
+						"sqlReaderQuery": "select * from gosales.INFORMATION_SCHEMA.TABLES\nwhere TABLE_SCHEMA = 'gosales'  --and TABLE_NAME = 'branch'",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},

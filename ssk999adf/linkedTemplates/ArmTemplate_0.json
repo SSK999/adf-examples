@@ -7,13 +7,9 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "ssk999adf"
 		},
-		"ls_sqldb_connectionString": {
+		"ls_blobstorage_connectionString": {
 			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'ls_sqldb'"
-		},
-		"ls_OnPrem_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'ls_OnPrem'"
+			"metadata": "Secure string for 'connectionString' of 'ls_blobstorage'"
 		}
 	},
 	"variables": {
@@ -21,133 +17,96 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('factoryName'), '/ls_sqldb')]",
+			"name": "[concat(parameters('factoryName'), '/ls_blobstorage')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"annotations": [],
-				"type": "AzureSqlDatabase",
+				"type": "AzureBlobStorage",
 				"typeProperties": {
-					"connectionString": "[parameters('ls_sqldb_connectionString')]"
+					"connectionString": "[parameters('ls_blobstorage_connectionString')]"
 				}
 			},
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/SelfHostedIR')]",
-			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "SelfHosted",
-				"typeProperties": {}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ds_Table_Cloud')]",
+			"name": "[concat(parameters('factoryName'), '/ds_input_file')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "ls_sqldb",
+					"referenceName": "ls_blobstorage",
 					"type": "LinkedServiceReference"
 				},
-				"parameters": {
-					"p_TableName": {
-						"type": "string"
-					},
-					"p_SchemaName": {
-						"type": "string"
-					}
-				},
 				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [],
+				"type": "DelimitedText",
 				"typeProperties": {
-					"schema": {
-						"value": "@dataset().p_SchemaName",
-						"type": "Expression"
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "Employees.csv",
+						"container": "input"
 					},
-					"table": {
-						"value": "@dataset().p_TableName",
-						"type": "Expression"
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "Employee_ID",
+						"type": "String"
+					},
+					{
+						"name": "First_Name",
+						"type": "String"
+					},
+					{
+						"name": "Last_Name",
+						"type": "String"
+					},
+					{
+						"name": "Dept_ID",
+						"type": "String"
+					},
+					{
+						"name": "Manager_ID",
+						"type": "String"
+					},
+					{
+						"name": "Salary",
+						"type": "String"
+					},
+					{
+						"name": "Expertise",
+						"type": "String"
 					}
-				}
+				]
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ls_sqldb')]"
+				"[concat(variables('factoryId'), '/linkedServices/ls_blobstorage')]"
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/ls_OnPrem')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "SqlServer",
-				"typeProperties": {
-					"connectionString": "[parameters('ls_OnPrem_connectionString')]"
-				},
-				"connectVia": {
-					"referenceName": "SelfHostedIR",
-					"type": "IntegrationRuntimeReference"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/integrationRuntimes/SelfHostedIR')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ds_Table_OnPrem')]",
+			"name": "[concat(parameters('factoryName'), '/ds_output_file')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "ls_OnPrem",
+					"referenceName": "ls_blobstorage",
 					"type": "LinkedServiceReference"
 				},
-				"parameters": {
-					"p_TableName": {
-						"type": "string"
-					},
-					"p_SchemaName": {
-						"type": "string"
-					}
-				},
 				"annotations": [],
-				"type": "SqlServerTable",
-				"schema": [],
+				"type": "Json",
 				"typeProperties": {
-					"schema": {
-						"value": "@dataset().p_SchemaName",
-						"type": "Expression"
-					},
-					"table": {
-						"value": "@dataset().p_TableName",
-						"type": "Expression"
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "output"
 					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ls_OnPrem')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ds_Tablelist')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "ls_OnPrem",
-					"type": "LinkedServiceReference"
 				},
-				"annotations": [],
-				"type": "SqlServerTable",
-				"schema": [],
-				"typeProperties": {}
+				"schema": {}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ls_OnPrem')]"
+				"[concat(variables('factoryId'), '/linkedServices/ls_blobstorage')]"
 			]
 		},
 		{
@@ -157,8 +116,8 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "Lookup1",
-						"type": "Lookup",
+						"name": "Copy data1",
+						"type": "Copy",
 						"dependsOn": [],
 						"policy": {
 							"timeout": "0.12:00:00",
@@ -170,107 +129,41 @@
 						"userProperties": [],
 						"typeProperties": {
 							"source": {
-								"type": "SqlServerSource",
-								"sqlReaderQuery": "select * from gosales.INFORMATION_SCHEMA.TABLES\nwhere TABLE_SCHEMA = 'gosales'  --and TABLE_NAME = 'branch'",
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
 							},
-							"dataset": {
-								"referenceName": "ds_Tablelist",
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobStorageWriteSettings"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "ds_input_file",
 								"type": "DatasetReference",
 								"parameters": {}
-							},
-							"firstRowOnly": false
-						}
-					},
-					{
-						"name": "ForEach1",
-						"type": "ForEach",
-						"dependsOn": [
-							{
-								"activity": "Lookup1",
-								"dependencyConditions": [
-									"Succeeded"
-								]
 							}
 						],
-						"userProperties": [],
-						"typeProperties": {
-							"items": {
-								"value": "@activity('Lookup1').output.value",
-								"type": "Expression"
-							},
-							"activities": [
-								{
-									"name": "Copy data1",
-									"type": "Copy",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "0.12:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"source": {
-											"type": "SqlServerSource",
-											"queryTimeout": "02:00:00",
-											"partitionOption": "None"
-										},
-										"sink": {
-											"type": "AzureSqlSink",
-											"writeBehavior": "insert",
-											"sqlWriterUseTableLock": false,
-											"tableOption": "autoCreate",
-											"disableMetricsCollection": false
-										},
-										"enableStaging": false,
-										"translator": {
-											"type": "TabularTranslator",
-											"typeConversion": true,
-											"typeConversionSettings": {
-												"allowDataTruncation": true,
-												"treatBooleanAsNumber": false
-											}
-										}
-									},
-									"inputs": [
-										{
-											"referenceName": "ds_Table_OnPrem",
-											"type": "DatasetReference",
-											"parameters": {
-												"p_TableName": {
-													"value": "@item().Table_Name",
-													"type": "Expression"
-												},
-												"p_SchemaName": {
-													"value": "@item().Table_Schema",
-													"type": "Expression"
-												}
-											}
-										}
-									],
-									"outputs": [
-										{
-											"referenceName": "ds_Table_Cloud",
-											"type": "DatasetReference",
-											"parameters": {
-												"p_TableName": {
-													"value": "@item().Table_Name",
-													"type": "Expression"
-												},
-												"p_SchemaName": {
-													"value": "@item().Table_Schema",
-													"type": "Expression"
-												}
-											}
-										}
-									]
-								}
-							]
-						}
+						"outputs": [
+							{
+								"referenceName": "ds_output_file",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
 					}
 				],
 				"policy": {
@@ -279,9 +172,8 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/ds_Tablelist')]",
-				"[concat(variables('factoryId'), '/datasets/ds_Table_OnPrem')]",
-				"[concat(variables('factoryId'), '/datasets/ds_Table_Cloud')]"
+				"[concat(variables('factoryId'), '/datasets/ds_input_file')]",
+				"[concat(variables('factoryId'), '/datasets/ds_output_file')]"
 			]
 		}
 	]

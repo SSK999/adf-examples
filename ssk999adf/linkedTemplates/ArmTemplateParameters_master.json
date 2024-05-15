@@ -5,10 +5,7 @@
 		"factoryName": {
 			"value": "ssk999adf"
 		},
-		"ls_OnPrem_connectionString": {
-			"value": ""
-		},
-		"ls_sqldb_connectionString": {
+		"ls_blobstorage_connectionString": {
 			"value": ""
 		},
 		"containerUri": {

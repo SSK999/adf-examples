@@ -7,13 +7,9 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "ssk999adf"
 		},
-		"ls_OnPrem_connectionString": {
+		"ls_blobstorage_connectionString": {
 			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'ls_OnPrem'"
-		},
-		"ls_sqldb_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'ls_sqldb'"
+			"metadata": "Secure string for 'connectionString' of 'ls_blobstorage'"
 		},
 		"containerUri": {
 			"type": "string",
@@ -42,11 +38,8 @@
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
 					},
-					"ls_sqldb_connectionString": {
-						"value": "[parameters('ls_sqldb_connectionString')]"
-					},
-					"ls_OnPrem_connectionString": {
-						"value": "[parameters('ls_OnPrem_connectionString')]"
+					"ls_blobstorage_connectionString": {
+						"value": "[parameters('ls_blobstorage_connectionString')]"
 					}
 				}
 			},

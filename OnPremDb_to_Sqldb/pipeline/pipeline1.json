@@ -3,7 +3,8 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Lookup1",
+				"name": "Lookup",
+				"description": "Get List of Tables to Copy",
 				"type": "Lookup",
 				"dependsOn": [],
 				"policy": {
@@ -29,11 +30,11 @@
 				}
 			},
 			{
-				"name": "ForEach1",
+				"name": "For Each Table",
 				"type": "ForEach",
 				"dependsOn": [
 					{
-						"activity": "Lookup1",
+						"activity": "Lookup",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -42,7 +43,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@activity('Lookup1').output.value",
+						"value": "@activity('Lookup').output.value",
 						"type": "Expression"
 					},
 					"activities": [

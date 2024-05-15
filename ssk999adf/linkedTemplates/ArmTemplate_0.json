@@ -7,32 +7,19 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "ssk999adf"
 		},
-		"ls_blobstorage_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'ls_blobstorage'"
-		},
 		"ls_sqldb_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'ls_sqldb'"
+		},
+		"ls_OnPrem_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'ls_OnPrem'"
 		}
 	},
 	"variables": {
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
-		{
-			"name": "[concat(parameters('factoryName'), '/ls_blobstorage')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureBlobStorage",
-				"typeProperties": {
-					"connectionString": "[parameters('ls_blobstorage_connectionString')]"
-				}
-			},
-			"dependsOn": []
-		},
 		{
 			"name": "[concat(parameters('factoryName'), '/ls_sqldb')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
@@ -47,43 +34,17 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/ds_CSVTable')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
+			"name": "[concat(parameters('factoryName'), '/SelfHostedIR')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"linkedServiceName": {
-					"referenceName": "ls_blobstorage",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"p_FileName": {
-						"type": "string"
-					}
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": {
-							"value": "@dataset().p_FileName",
-							"type": "Expression"
-						},
-						"container": "exported-data"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": []
+				"type": "SelfHosted",
+				"typeProperties": {}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ls_blobstorage')]"
-			]
+			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/ds_Table')]",
+			"name": "[concat(parameters('factoryName'), '/ds_Table_Cloud')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -118,31 +79,85 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/ds_TableList')]",
+			"name": "[concat(parameters('factoryName'), '/ls_OnPrem')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "SqlServer",
+				"typeProperties": {
+					"connectionString": "[parameters('ls_OnPrem_connectionString')]"
+				},
+				"connectVia": {
+					"referenceName": "SelfHostedIR",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/SelfHostedIR')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_Table_OnPrem')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "ls_sqldb",
+					"referenceName": "ls_OnPrem",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"p_TableName": {
+						"type": "string"
+					},
+					"p_SchemaName": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "SqlServerTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": {
+						"value": "@dataset().p_SchemaName",
+						"type": "Expression"
+					},
+					"table": {
+						"value": "@dataset().p_TableName",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_OnPrem')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_Tablelist')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_OnPrem",
 					"type": "LinkedServiceReference"
 				},
 				"annotations": [],
-				"type": "AzureSqlTable",
+				"type": "SqlServerTable",
 				"schema": [],
 				"typeProperties": {}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ls_sqldb')]"
+				"[concat(variables('factoryId'), '/linkedServices/ls_OnPrem')]"
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/pl_export_to_csv')]",
+			"name": "[concat(parameters('factoryName'), '/pipeline1')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"activities": [
 					{
-						"name": "List Tables",
+						"name": "Lookup1",
 						"type": "Lookup",
 						"dependsOn": [],
 						"policy": {
@@ -155,13 +170,13 @@
 						"userProperties": [],
 						"typeProperties": {
 							"source": {
-								"type": "AzureSqlSource",
-								"sqlReaderQuery": "select * from ssk999db.INFORMATION_SCHEMA.TABLES\nwhere table_name in ('Cars','Countries','Movies')",
+								"type": "SqlServerSource",
+								"sqlReaderQuery": "select * from gosales.INFORMATION_SCHEMA.TABLES\nwhere TABLE_SCHEMA = 'gosales'  --and TABLE_NAME = 'branch'",
 								"queryTimeout": "02:00:00",
 								"partitionOption": "None"
 							},
 							"dataset": {
-								"referenceName": "ds_TableList",
+								"referenceName": "ds_Tablelist",
 								"type": "DatasetReference",
 								"parameters": {}
 							},
@@ -169,11 +184,11 @@
 						}
 					},
 					{
-						"name": "For Each Table",
+						"name": "ForEach1",
 						"type": "ForEach",
 						"dependsOn": [
 							{
-								"activity": "List Tables",
+								"activity": "Lookup1",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -182,12 +197,12 @@
 						"userProperties": [],
 						"typeProperties": {
 							"items": {
-								"value": "@activity('List Tables').output.value",
+								"value": "@activity('Lookup1').output.value",
 								"type": "Expression"
 							},
 							"activities": [
 								{
-									"name": "Export to CSV",
+									"name": "Copy data1",
 									"type": "Copy",
 									"dependsOn": [],
 									"policy": {
@@ -200,20 +215,16 @@
 									"userProperties": [],
 									"typeProperties": {
 										"source": {
-											"type": "AzureSqlSource",
+											"type": "SqlServerSource",
 											"queryTimeout": "02:00:00",
 											"partitionOption": "None"
 										},
 										"sink": {
-											"type": "DelimitedTextSink",
-											"storeSettings": {
-												"type": "AzureBlobStorageWriteSettings"
-											},
-											"formatSettings": {
-												"type": "DelimitedTextWriteSettings",
-												"quoteAllText": true,
-												"fileExtension": ".txt"
-											}
+											"type": "AzureSqlSink",
+											"writeBehavior": "insert",
+											"sqlWriterUseTableLock": false,
+											"tableOption": "autoCreate",
+											"disableMetricsCollection": false
 										},
 										"enableStaging": false,
 										"translator": {
@@ -227,15 +238,15 @@
 									},
 									"inputs": [
 										{
-											"referenceName": "ds_Table",
+											"referenceName": "ds_Table_OnPrem",
 											"type": "DatasetReference",
 											"parameters": {
 												"p_TableName": {
-													"value": "@item().TABLE_NAME",
+													"value": "@item().Table_Name",
 													"type": "Expression"
 												},
 												"p_SchemaName": {
-													"value": "@item().TABLE_SCHEMA",
+													"value": "@item().Table_Schema",
 													"type": "Expression"
 												}
 											}
@@ -243,11 +254,15 @@
 									],
 									"outputs": [
 										{
-											"referenceName": "ds_CSVTable",
+											"referenceName": "ds_Table_Cloud",
 											"type": "DatasetReference",
 											"parameters": {
-												"p_FileName": {
-													"value": "@concat(item().TABLE_SCHEMA,'_',item().TABLE_NAME,'.csv')",
+												"p_TableName": {
+													"value": "@item().Table_Name",
+													"type": "Expression"
+												},
+												"p_SchemaName": {
+													"value": "@item().Table_Schema",
 													"type": "Expression"
 												}
 											}
@@ -264,143 +279,9 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/ds_TableList')]",
-				"[concat(variables('factoryId'), '/datasets/ds_Table')]",
-				"[concat(variables('factoryId'), '/datasets/ds_CSVTable')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/pl_export_to_csv_control')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "List Tables",
-						"type": "Lookup",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "AzureSqlSource",
-								"sqlReaderQuery": "select * from Tables_To_Export \n",
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"dataset": {
-								"referenceName": "ds_TableList",
-								"type": "DatasetReference",
-								"parameters": {}
-							},
-							"firstRowOnly": false
-						}
-					},
-					{
-						"name": "For Each Table",
-						"type": "ForEach",
-						"dependsOn": [
-							{
-								"activity": "List Tables",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"items": {
-								"value": "@activity('List Tables').output.value",
-								"type": "Expression"
-							},
-							"activities": [
-								{
-									"name": "Export to CSV",
-									"type": "Copy",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "0.12:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"source": {
-											"type": "AzureSqlSource",
-											"queryTimeout": "02:00:00",
-											"partitionOption": "None"
-										},
-										"sink": {
-											"type": "DelimitedTextSink",
-											"storeSettings": {
-												"type": "AzureBlobStorageWriteSettings"
-											},
-											"formatSettings": {
-												"type": "DelimitedTextWriteSettings",
-												"quoteAllText": true,
-												"fileExtension": ".txt"
-											}
-										},
-										"enableStaging": false,
-										"translator": {
-											"type": "TabularTranslator",
-											"typeConversion": true,
-											"typeConversionSettings": {
-												"allowDataTruncation": true,
-												"treatBooleanAsNumber": false
-											}
-										}
-									},
-									"inputs": [
-										{
-											"referenceName": "ds_Table",
-											"type": "DatasetReference",
-											"parameters": {
-												"p_TableName": {
-													"value": "@item().TABLE_NAME",
-													"type": "Expression"
-												},
-												"p_SchemaName": {
-													"value": "@item().TABLE_SCHEMA",
-													"type": "Expression"
-												}
-											}
-										}
-									],
-									"outputs": [
-										{
-											"referenceName": "ds_CSVTable",
-											"type": "DatasetReference",
-											"parameters": {
-												"p_FileName": {
-													"value": "@concat(item().TABLE_SCHEMA,'_',item().TABLE_NAME,'.csv')",
-													"type": "Expression"
-												}
-											}
-										}
-									]
-								}
-							]
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/ds_TableList')]",
-				"[concat(variables('factoryId'), '/datasets/ds_Table')]",
-				"[concat(variables('factoryId'), '/datasets/ds_CSVTable')]"
+				"[concat(variables('factoryId'), '/datasets/ds_Tablelist')]",
+				"[concat(variables('factoryId'), '/datasets/ds_Table_OnPrem')]",
+				"[concat(variables('factoryId'), '/datasets/ds_Table_Cloud')]"
 			]
 		}
 	]

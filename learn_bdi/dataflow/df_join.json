@@ -1,5 +1,5 @@
 {
-	"name": "dataflow2",
+	"name": "df_join",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {

@@ -8,6 +8,9 @@
 		"ls_blobstorage_connectionString": {
 			"value": ""
 		},
+		"ls_sqldb_connectionString": {
+			"value": ""
+		},
 		"containerUri": {
 			"value": ""
 		},

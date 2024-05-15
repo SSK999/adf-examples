@@ -1,5 +1,5 @@
 {
-	"name": "ds_customer",
+	"name": "ds_customer_subset",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "ls_sqldb",
@@ -73,8 +73,8 @@
 			}
 		],
 		"typeProperties": {
-			"schema": "SalesLT",
-			"table": "Customer"
+			"schema": "dbo",
+			"table": "CustomerSubset"
 		}
 	}
 }

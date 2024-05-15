@@ -1,0 +1,12 @@
+{
+	"name": "ds_Tablelist",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_OnPrem",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": []
+	}
+}

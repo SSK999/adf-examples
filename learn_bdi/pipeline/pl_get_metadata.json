@@ -1,5 +1,5 @@
 {
-	"name": "pipeline1",
+	"name": "pl_get_metadata",
 	"properties": {
 		"activities": [
 			{

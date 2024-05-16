@@ -1060,7 +1060,14 @@
 					{
 						"name": "df_union",
 						"type": "ExecuteDataFlow",
-						"dependsOn": [],
+						"dependsOn": [
+							{
+								"activity": "spDropTable",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
 						"policy": {
 							"timeout": "0.12:00:00",
 							"retry": 0,
@@ -1086,6 +1093,32 @@
 							},
 							"traceLevel": "Fine"
 						}
+					},
+					{
+						"name": "spDropTable",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[dbo].[spDropTable]",
+							"storedProcedureParameters": {
+								"p_TableName": {
+									"value": "Customer_Union",
+									"type": "String"
+								}
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "ls_sqldb",
+							"type": "LinkedServiceReference"
+						}
 					}
 				],
 				"policy": {
@@ -1094,7 +1127,8 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/df_union')]"
+				"[concat(variables('factoryId'), '/dataflows/df_union')]",
+				"[concat(variables('factoryId'), '/linkedServices/ls_sqldb')]"
 			]
 		}
 	]

@@ -11,10 +11,7 @@
 		"ls_sqldb_connectionString": {
 			"value": ""
 		},
-		"new-blob_properties_pl_trigger_parameters_p_fileName": {
-			"value": "@triggerBody().p_fileName"
-		},
-		"new-blob_properties_typeProperties_scope": {
+		"newblob1_properties_typeProperties_scope": {
 			"value": "/subscriptions/0cfe2870-d256-4119-b0a3-16293ac11bdc/resourceGroups/1-17162b1e-playground-sandbox/providers/Microsoft.Storage/storageAccounts/ssk999sa"
 		}
 	}

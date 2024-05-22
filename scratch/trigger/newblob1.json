@@ -8,6 +8,9 @@
 				"pipelineReference": {
 					"referenceName": "pl_trigger",
 					"type": "PipelineReference"
+				},
+				"parameters": {
+					"p_fileName": "@triggerBody().p_fileName"
 				}
 			}
 		],

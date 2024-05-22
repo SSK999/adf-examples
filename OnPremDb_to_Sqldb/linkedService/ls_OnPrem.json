@@ -6,10 +6,10 @@
 		"type": "SqlServer",
 		"typeProperties": {
 			"connectionString": "integrated security=False;data source=ssk-asus-beast\\sqlexpress;initial catalog=gosales;user id=ssk",
-			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiI2ZDAwZGFiMy05ZWJiLTQ1MWEtYjE2Ni1hZTIwMWE0MGU1MDAiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiJmN2E5MzE5NC1mZGRmLTQyNjMtODkwOC05N2MxZDQ2ZTUzNDAiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
 		},
 		"connectVia": {
-			"referenceName": "SelfHostedIR",
+			"referenceName": "integrationRuntime",
 			"type": "IntegrationRuntimeReference"
 		}
 	}

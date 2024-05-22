@@ -14,6 +14,14 @@
 		"ls_sqldb_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'ls_sqldb'"
+		},
+		"new-blob_properties_pl_trigger_parameters_p_fileName": {
+			"type": "string",
+			"defaultValue": "@triggerBody().p_fileName"
+		},
+		"new-blob_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/0cfe2870-d256-4119-b0a3-16293ac11bdc/resourceGroups/1-17162b1e-playground-sandbox/providers/Microsoft.Storage/storageAccounts/ssk999sa"
 		}
 	},
 	"variables": {
@@ -1063,6 +1071,38 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/ds_employees_input')]",
 				"[concat(variables('factoryId'), '/datasets/ds_employees_output')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/new-blob')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "pl_trigger",
+							"type": "PipelineReference"
+						},
+						"parameters": {
+							"p_fileName": "[parameters('new-blob_properties_pl_trigger_parameters_p_fileName')]"
+						}
+					}
+				],
+				"type": "BlobEventsTrigger",
+				"typeProperties": {
+					"blobPathBeginsWith": "/input/blobs/",
+					"ignoreEmptyBlobs": true,
+					"scope": "[parameters('new-blob_properties_typeProperties_scope')]",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/pl_trigger')]"
 			]
 		}
 	]

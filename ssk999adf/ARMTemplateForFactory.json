@@ -15,6 +15,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'ls_sqldb'"
 		},
+		"newblob1_properties_pl_trigger_parameters_p_fileName": {
+			"type": "string",
+			"defaultValue": "@triggerBody().p_fileName"
+		},
 		"newblob1_properties_typeProperties_scope": {
 			"type": "string",
 			"defaultValue": "/subscriptions/0cfe2870-d256-4119-b0a3-16293ac11bdc/resourceGroups/1-17162b1e-playground-sandbox/providers/Microsoft.Storage/storageAccounts/ssk999sa"
@@ -1075,8 +1079,18 @@
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"annotations": [],
-				"runtimeState": "Stopped",
-				"pipelines": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "pl_trigger",
+							"type": "PipelineReference"
+						},
+						"parameters": {
+							"p_fileName": "[parameters('newblob1_properties_pl_trigger_parameters_p_fileName')]"
+						}
+					}
+				],
 				"type": "BlobEventsTrigger",
 				"typeProperties": {
 					"blobPathBeginsWith": "/input/blobs/",
@@ -1087,7 +1101,9 @@
 					]
 				}
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/pl_trigger')]"
+			]
 		}
 	]
 }

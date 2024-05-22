@@ -7,21 +7,13 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "ssk999adf"
 		},
-		"ls_BlobStorage_connectionString": {
+		"ls_OnPrem_connectionString": {
 			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'ls_BlobStorage'"
+			"metadata": "Secure string for 'connectionString' of 'ls_OnPrem'"
 		},
 		"ls_sqldb_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'ls_sqldb'"
-		},
-		"newblob1_properties_pl_trigger_parameters_p_fileName": {
-			"type": "string",
-			"defaultValue": "@triggerBody().p_fileName"
-		},
-		"newblob1_properties_typeProperties_scope": {
-			"type": "string",
-			"defaultValue": "/subscriptions/0cfe2870-d256-4119-b0a3-16293ac11bdc/resourceGroups/1-17162b1e-playground-sandbox/providers/Microsoft.Storage/storageAccounts/ssk999sa"
 		},
 		"containerUri": {
 			"type": "string",
@@ -50,17 +42,11 @@
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
 					},
-					"ls_BlobStorage_connectionString": {
-						"value": "[parameters('ls_BlobStorage_connectionString')]"
-					},
 					"ls_sqldb_connectionString": {
 						"value": "[parameters('ls_sqldb_connectionString')]"
 					},
-					"newblob1_properties_pl_trigger_parameters_p_fileName": {
-						"value": "[parameters('newblob1_properties_pl_trigger_parameters_p_fileName')]"
-					},
-					"newblob1_properties_typeProperties_scope": {
-						"value": "[parameters('newblob1_properties_typeProperties_scope')]"
+					"ls_OnPrem_connectionString": {
+						"value": "[parameters('ls_OnPrem_connectionString')]"
 					}
 				}
 			},

@@ -1,0 +1,60 @@
+{
+	"name": "ds_employees_input",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_BlobStorage",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"p_fileName": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": {
+					"value": "@dataset().p_fileName",
+					"type": "Expression"
+				},
+				"container": "input"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "Employee_ID",
+				"type": "String"
+			},
+			{
+				"name": "First_Name",
+				"type": "String"
+			},
+			{
+				"name": "Last_Name",
+				"type": "String"
+			},
+			{
+				"name": "Dept_ID",
+				"type": "String"
+			},
+			{
+				"name": "Manager_ID",
+				"type": "String"
+			},
+			{
+				"name": "Salary",
+				"type": "String"
+			},
+			{
+				"name": "Expertise",
+				"type": "String"
+			}
+		]
+	}
+}

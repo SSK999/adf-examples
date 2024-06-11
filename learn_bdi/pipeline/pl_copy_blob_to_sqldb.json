@@ -1,9 +1,9 @@
 {
-	"name": "pl_copy_blob_to_blob",
+	"name": "pl_copy_blob_to_sqldb",
 	"properties": {
 		"activities": [
 			{
-				"name": "pl_copy_blob_to_blob",
+				"name": "pl_copy_blob_to_sqldb",
 				"description": " ",
 				"type": "Copy",
 				"dependsOn": [],

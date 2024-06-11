@@ -421,6 +421,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobStorageLocation",
+						"fileName": "dataflow_output.csv",
 						"container": "output"
 					},
 					"columnDelimiter": ",",

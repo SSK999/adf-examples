@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataset": {
-						"referenceName": "ds_output_file",
+						"referenceName": "ds_output_json_file",
 						"type": "DatasetReference"
 					},
 					"logStorageSettings": {

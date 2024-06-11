@@ -1,5 +1,5 @@
 {
-	"name": "pipeline1",
+	"name": "pl_copy_parm sql_to_blob",
 	"properties": {
 		"activities": [
 			{
@@ -49,7 +49,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "ds_output_file",
+						"referenceName": "ds_output_json_file",
 						"type": "DatasetReference"
 					}
 				]

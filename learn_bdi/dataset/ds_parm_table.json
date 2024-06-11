@@ -1,0 +1,30 @@
+{
+	"name": "ds_parm_table",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_sqldb",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"p_dbname": {
+				"type": "String"
+			},
+			"p_tablename": {
+				"type": "String"
+			}
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": {
+				"value": "@dataset().p_dbname",
+				"type": "Expression"
+			},
+			"table": {
+				"value": "@dataset().p_tablename",
+				"type": "Expression"
+			}
+		}
+	}
+}

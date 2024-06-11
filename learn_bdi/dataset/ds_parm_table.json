@@ -6,10 +6,10 @@
 			"type": "LinkedServiceReference"
 		},
 		"parameters": {
-			"p_dbname": {
+			"p_schema": {
 				"type": "String"
 			},
-			"p_tablename": {
+			"p_table": {
 				"type": "String"
 			}
 		},

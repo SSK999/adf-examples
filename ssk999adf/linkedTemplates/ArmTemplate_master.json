@@ -7,9 +7,9 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "ssk999adf"
 		},
-		"ls_OnPrem_connectionString": {
+		"ls_blobstorage_connectionString": {
 			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'ls_OnPrem'"
+			"metadata": "Secure string for 'connectionString' of 'ls_blobstorage'"
 		},
 		"ls_sqldb_connectionString": {
 			"type": "secureString",
@@ -42,15 +42,35 @@
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
 					},
+					"ls_blobstorage_connectionString": {
+						"value": "[parameters('ls_blobstorage_connectionString')]"
+					},
 					"ls_sqldb_connectionString": {
 						"value": "[parameters('ls_sqldb_connectionString')]"
-					},
-					"ls_OnPrem_connectionString": {
-						"value": "[parameters('ls_OnPrem_connectionString')]"
 					}
 				}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "ssk999adf_ArmTemplate_1",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_1.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'ssk999adf_ArmTemplate_0')]"
+			]
 		}
 	]
 }

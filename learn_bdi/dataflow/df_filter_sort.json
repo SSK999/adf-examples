@@ -62,6 +62,7 @@
 				"          Status as string,",
 				"          Error as string",
 				"     ),",
+				"     partitionFileNames:['dataflow_output.csv'],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
 				"     partitionBy('hash', 1)) ~> sink1"
